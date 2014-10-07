@@ -50,7 +50,7 @@ type Echo(s:BufferEvent, esc:EventSyncContext) as self =
       (echoAgent :> IDisposable).Dispose()
 
 let read s remoteIP =
-  let proxy = new Echo(s,eventBase) :> IEcho
+  let echo = new Echo(s,eventBase) :> IEcho
   let buffer = Array.zeroCreate 65536
   s.Read.Add(fun (e) -> try
                           let input = s.Input
@@ -60,7 +60,7 @@ let read s remoteIP =
                               match read with
                                 | n when n > 0 -> let a:byte array = Array.zeroCreate (read)
                                                   Buffer.BlockCopy(buffer, 0, a, 0, read)
-                                                  proxy.Post (Read a)
+                                                  echo.Post (Read a)
                                                   readallinternal()
                                 |_ -> ()
                             readallinternal()
